@@ -65,6 +65,7 @@ async function cloudlabRequest(
     method,
     headers,
     body: body ? JSON.stringify(body) : undefined,
+    redirect: "follow",
   });
 
   if (!response.ok) {
@@ -188,20 +189,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
-        name: "get_experiment_logs",
-        description: "Get console logs for nodes in an experiment",
-        inputSchema: {
-          type: "object",
-          properties: {
-            experiment_id: {
-              type: "string",
-              description: "Experiment UUID (from list_experiments)",
-            },
-          },
-          required: ["experiment_id"],
-        },
-      },
-      {
         name: "extend_experiment",
         description: "Extend the expiration time of an experiment",
         inputSchema: {
@@ -214,10 +201,6 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             hours: {
               type: "number",
               description: "Number of hours to extend",
-            },
-            reason: {
-              type: "string",
-              description: "Reason for extension",
             },
           },
           required: ["experiment_id", "hours"],
@@ -345,29 +328,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
-      case "get_experiment_logs": {
-        const { experiment_id } = args as { experiment_id: string };
-        const result = await cloudlabRequest(`/experiments/${experiment_id}/logs`);
-        return {
-          content: [
-            {
-              type: "text",
-              text: JSON.stringify(result, null, 2),
-            },
-          ],
-        };
-      }
-
       case "extend_experiment": {
-        const { experiment_id, hours, reason } = args as {
+        const { experiment_id, hours } = args as {
           experiment_id: string;
           hours: number;
-          reason?: string;
         };
         const result = await cloudlabRequest(
-          `/experiments/${experiment_id}/extend`,
-          "POST",
-          { hours, reason: reason || "Extension requested" }
+          `/experiments/${experiment_id}`,
+          "PUT",
+          { extend_by: hours }
         );
         return {
           content: [

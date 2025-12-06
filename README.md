@@ -9,7 +9,6 @@ An MCP (Model Context Protocol) server for managing CloudLab/Emulab experiments.
 - **Reboot nodes** - Reboot individual nodes or all nodes in an experiment
 - **Reload/reimage nodes** - Reload a node with its disk image
 - **Power cycle nodes** - Hard reboot for unresponsive nodes
-- **Get console logs** - Retrieve console output from nodes
 - **Extend experiments** - Request time extensions
 - **Terminate experiments** - Clean up when done
 
@@ -70,7 +69,6 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 | `reboot_all_nodes` | Reboot all nodes in an experiment |
 | `reload_node` | Reload/reimage a node |
 | `powercycle_node` | Power cycle a node (hard reboot) |
-| `get_experiment_logs` | Get console logs for nodes |
 | `extend_experiment` | Extend experiment expiration |
 | `terminate_experiment` | Terminate an experiment |
 
