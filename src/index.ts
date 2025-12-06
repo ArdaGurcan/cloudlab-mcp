@@ -111,16 +111,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            project: {
+            experiment_id: {
               type: "string",
-              description: "Project name (e.g., 'UCY-CS499-DC')",
-            },
-            experiment: {
-              type: "string",
-              description: "Experiment name",
+              description: "Experiment UUID (from list_experiments)",
             },
           },
-          required: ["project", "experiment"],
+          required: ["experiment_id"],
         },
       },
       {
@@ -129,20 +125,16 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            project: {
+            experiment_id: {
               type: "string",
-              description: "Project name",
-            },
-            experiment: {
-              type: "string",
-              description: "Experiment name",
+              description: "Experiment UUID (from list_experiments)",
             },
             node: {
               type: "string",
-              description: "Node name (e.g., 'node0')",
+              description: "Node client_id (e.g., 'node0')",
             },
           },
-          required: ["project", "experiment", "node"],
+          required: ["experiment_id", "node"],
         },
       },
       {
@@ -151,16 +143,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            project: {
+            experiment_id: {
               type: "string",
-              description: "Project name",
-            },
-            experiment: {
-              type: "string",
-              description: "Experiment name",
+              description: "Experiment UUID (from list_experiments)",
             },
           },
-          required: ["project", "experiment"],
+          required: ["experiment_id"],
         },
       },
       {
@@ -169,20 +157,16 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            project: {
+            experiment_id: {
               type: "string",
-              description: "Project name",
-            },
-            experiment: {
-              type: "string",
-              description: "Experiment name",
+              description: "Experiment UUID (from list_experiments)",
             },
             node: {
               type: "string",
-              description: "Node name",
+              description: "Node client_id",
             },
           },
-          required: ["project", "experiment", "node"],
+          required: ["experiment_id", "node"],
         },
       },
       {
@@ -191,20 +175,16 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            project: {
+            experiment_id: {
               type: "string",
-              description: "Project name",
-            },
-            experiment: {
-              type: "string",
-              description: "Experiment name",
+              description: "Experiment UUID (from list_experiments)",
             },
             node: {
               type: "string",
-              description: "Node name",
+              description: "Node client_id",
             },
           },
-          required: ["project", "experiment", "node"],
+          required: ["experiment_id", "node"],
         },
       },
       {
@@ -213,16 +193,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            project: {
+            experiment_id: {
               type: "string",
-              description: "Project name",
-            },
-            experiment: {
-              type: "string",
-              description: "Experiment name",
+              description: "Experiment UUID (from list_experiments)",
             },
           },
-          required: ["project", "experiment"],
+          required: ["experiment_id"],
         },
       },
       {
@@ -231,13 +207,9 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            project: {
+            experiment_id: {
               type: "string",
-              description: "Project name",
-            },
-            experiment: {
-              type: "string",
-              description: "Experiment name",
+              description: "Experiment UUID (from list_experiments)",
             },
             hours: {
               type: "number",
@@ -248,7 +220,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
               description: "Reason for extension",
             },
           },
-          required: ["project", "experiment", "hours"],
+          required: ["experiment_id", "hours"],
         },
       },
       {
@@ -257,16 +229,12 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         inputSchema: {
           type: "object",
           properties: {
-            project: {
+            experiment_id: {
               type: "string",
-              description: "Project name",
-            },
-            experiment: {
-              type: "string",
-              description: "Experiment name",
+              description: "Experiment UUID (from list_experiments)",
             },
           },
-          required: ["project", "experiment"],
+          required: ["experiment_id"],
         },
       },
     ],
@@ -292,8 +260,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "get_experiment": {
-        const { project, experiment } = args as { project: string; experiment: string };
-        const result = await cloudlabRequest(`/experiments/${project}/${experiment}`);
+        const { experiment_id } = args as { experiment_id: string };
+        const result = await cloudlabRequest(`/experiments/${experiment_id}`);
         return {
           content: [
             {
@@ -305,13 +273,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "reboot_node": {
-        const { project, experiment, node } = args as {
-          project: string;
-          experiment: string;
+        const { experiment_id, node } = args as {
+          experiment_id: string;
           node: string;
         };
         const result = await cloudlabRequest(
-          `/experiments/${project}/${experiment}/nodes/${node}/reboot`,
+          `/experiments/${experiment_id}/node/${node}/reboot`,
           "POST"
         );
         return {
@@ -325,9 +292,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "reboot_all_nodes": {
-        const { project, experiment } = args as { project: string; experiment: string };
+        const { experiment_id } = args as { experiment_id: string };
         const result = await cloudlabRequest(
-          `/experiments/${project}/${experiment}/reboot`,
+          `/experiments/${experiment_id}/nodes/reboot`,
           "POST"
         );
         return {
@@ -341,13 +308,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "reload_node": {
-        const { project, experiment, node } = args as {
-          project: string;
-          experiment: string;
+        const { experiment_id, node } = args as {
+          experiment_id: string;
           node: string;
         };
         const result = await cloudlabRequest(
-          `/experiments/${project}/${experiment}/nodes/${node}/reload`,
+          `/experiments/${experiment_id}/node/${node}/reload`,
           "POST"
         );
         return {
@@ -361,13 +327,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "powercycle_node": {
-        const { project, experiment, node } = args as {
-          project: string;
-          experiment: string;
+        const { experiment_id, node } = args as {
+          experiment_id: string;
           node: string;
         };
         const result = await cloudlabRequest(
-          `/experiments/${project}/${experiment}/nodes/${node}/powercycle`,
+          `/experiments/${experiment_id}/node/${node}/powercycle`,
           "POST"
         );
         return {
@@ -381,8 +346,8 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "get_experiment_logs": {
-        const { project, experiment } = args as { project: string; experiment: string };
-        const result = await cloudlabRequest(`/experiments/${project}/${experiment}/logs`);
+        const { experiment_id } = args as { experiment_id: string };
+        const result = await cloudlabRequest(`/experiments/${experiment_id}/logs`);
         return {
           content: [
             {
@@ -394,14 +359,13 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "extend_experiment": {
-        const { project, experiment, hours, reason } = args as {
-          project: string;
-          experiment: string;
+        const { experiment_id, hours, reason } = args as {
+          experiment_id: string;
           hours: number;
           reason?: string;
         };
         const result = await cloudlabRequest(
-          `/experiments/${project}/${experiment}/extend`,
+          `/experiments/${experiment_id}/extend`,
           "POST",
           { hours, reason: reason || "Extension requested" }
         );
@@ -416,9 +380,9 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case "terminate_experiment": {
-        const { project, experiment } = args as { project: string; experiment: string };
+        const { experiment_id } = args as { experiment_id: string };
         const result = await cloudlabRequest(
-          `/experiments/${project}/${experiment}`,
+          `/experiments/${experiment_id}`,
           "DELETE"
         );
         return {
