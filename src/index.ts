@@ -107,6 +107,36 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
         },
       },
       {
+        name: "create_experiment",
+        description: "Create a new CloudLab experiment from a profile",
+        inputSchema: {
+          type: "object",
+          properties: {
+            project: {
+              type: "string",
+              description: "Project name (e.g., 'UCY-CS499-DC')",
+            },
+            profile_name: {
+              type: "string",
+              description: "Profile name (e.g., 'small-lan')",
+            },
+            profile_project: {
+              type: "string",
+              description: "Project that owns the profile (e.g., 'PortalProfiles')",
+            },
+            name: {
+              type: "string",
+              description: "Optional experiment name (auto-generated if not provided)",
+            },
+            bindings: {
+              type: "object",
+              description: "Optional profile parameter bindings (e.g., {nodeCount: '2', phystype: 'c220g1'})",
+            },
+          },
+          required: ["project", "profile_name", "profile_project"],
+        },
+      },
+      {
         name: "get_experiment",
         description: "Get detailed status of a specific experiment including node states",
         inputSchema: {
@@ -237,6 +267,33 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
             {
               type: "text",
               text: JSON.stringify(result, null, 2),
+            },
+          ],
+        };
+      }
+
+      case "create_experiment": {
+        const { project, profile_name, profile_project, name, bindings } = args as {
+          project: string;
+          profile_name: string;
+          profile_project: string;
+          name?: string;
+          bindings?: Record<string, string>;
+        };
+        const body: Record<string, any> = {
+          project,
+          profile_name,
+          profile_project,
+        };
+        if (name) body.name = name;
+        if (bindings) body.bindings = bindings;
+
+        const result = await cloudlabRequest("/experiments", "POST", body);
+        return {
+          content: [
+            {
+              type: "text",
+              text: `Experiment created: ${JSON.stringify(result, null, 2)}`,
             },
           ],
         };

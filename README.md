@@ -4,6 +4,7 @@ An MCP (Model Context Protocol) server for managing CloudLab/Emulab experiments.
 
 ## Features
 
+- **Create experiments** - Create new experiments from profiles
 - **List experiments** - View all your CloudLab experiments
 - **Get experiment details** - See detailed status including node states
 - **Reboot nodes** - Reboot individual nodes or all nodes in an experiment
@@ -63,6 +64,7 @@ Add to your Claude Desktop configuration (`~/Library/Application Support/Claude/
 
 | Tool | Description |
 |------|-------------|
+| `create_experiment` | Create a new experiment from a profile |
 | `list_experiments` | List all your experiments |
 | `get_experiment` | Get detailed status of an experiment |
 | `reboot_node` | Reboot a specific node |
